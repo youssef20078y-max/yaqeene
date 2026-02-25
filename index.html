@@ -3146,7 +3146,44 @@ loadProProgress();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
+    // نخلي فيه سجل تنقل
+let pageHistory = ["homePage"];
+
+function showPage(pageId) {
+
+    // نخبي كل الصفحات
+    document.querySelectorAll(".page").forEach(p => {
+        p.style.display = "none";
+    });
+
+    // نظهر الصفحة المطلوبة
+    document.getElementById(pageId).style.display = "block";
+
+    // نحفظها في السجل
+    pageHistory.push(pageId);
+
+    window.history.pushState({}, "");
+}
+
+// التحكم في زرار الرجوع
+window.addEventListener("popstate", function () {
+
+    if (pageHistory.length > 1) {
+        pageHistory.pop(); // نحذف الحالية
+        let prevPage = pageHistory[pageHistory.length - 1];
+
+        document.querySelectorAll(".page").forEach(p => {
+            p.style.display = "none";
+        });
+
+        document.getElementById(prevPage).style.display = "block";
+
+        window.history.pushState({}, "");
+    }
+});
+    
 </script>
 
 </body>
+
 </html>
