@@ -163,7 +163,7 @@
 
             <div class="menu-item" onclick="showPage('duaPage')" style="background-color: #e1f5fe; color: #0288d1;">🙏 <span>الأدعية</span></div>
             
-            <div class="menu-item" onclick="showPage('dreamsPage');" style="background-color: #b357f0; color: #0f0f0c;">
+            <div class="menu-item" onclick="showPage('dreamsPage'); loadDreams();" style="background-color: #b357f0; color: #0f0f0c;">
                 🌙 <span>تفسير الأحلام</span>
             </div>
 
@@ -271,6 +271,24 @@
         <select id="surahSelect" class="surah-select" onchange="getSurahData()">
             <option value="">اختر السورة...</option>
         </select>
+        <select id="reciterSelect" class="surah-select" onchange="changeReciter()">
+
+            <option value="afs">مشاري العفاسي</option>
+            <option value="husr">الحصري</option>
+            <option value="sds">السديس</option>
+            <option value="minsh">المنشاوي</option>
+            <option value="maher">ماهر المعيقلي</option>
+            <option value="ajm">أحمد العجمي</option>
+            <option value="shur">الشريم</option>
+            <option value="ghamdi">سعد الغامدي</option>
+            <option value="basfar">عبدالله بصفر</option>
+            <option value="tiblawi">محمد الطبلاوي</option>
+            <option value="abdulbasit">عبدالباسط عبدالصمد</option>
+            <option value="yasser">ياسر الدوسري</option>
+            <option value="qasim">ناصر القطامي</option>
+            
+        </select>
+            
         <div id="audioContainer" class="content-card" style="display:none; text-align:center;">
             <span id="audioTitle" style="font-weight:bold; display:block; margin-bottom:10px;"></span>
             <audio id="surahAudio" controls><source src="" type="audio/mpeg"></audio>
@@ -530,6 +548,16 @@
         <div class="content-card" style="text-align:center;">
     
             <h2 style="margin-bottom:15px;">📖 المصحف الشريف</h2>
+
+            <div style="margin-bottom:15px;">
+                <input type="number" id="goToPageInput" placeholder="اكتب رقم الصفحة (1 - 604)"
+                    style="width:70%; padding:10px; border-radius:10px; border:2px solid #10b981;">
+                    
+                <button onclick="goToPage()"
+                    style="padding:10px 20px; background:#1565c0; color:white; border:none; border-radius:10px;">
+                    انتقال
+                </button>
+            </div>
     
             <img id="mushafImage" 
                  src="https://quran.ksu.edu.sa/png_big/1.png" 
@@ -569,6 +597,9 @@
             <option value="ar.muyassar">التفسير الميسر</option>
             <option value="ar.jalalayn">تفسير الجلالين</option>
             <option value="ar.saadi">تفسير السعدي</option>
+            <option value="ar.qurtubi">تفسير القرطبي</option>
+           <option value="ar.baghawi">تفسير البغوي</option>
+           <option value="ar.waseet">التفسير الوسيط</option>ion>
         </select>
     
         <button onclick="loadFullTafsir()" 
@@ -603,15 +634,20 @@
             <h2 id="q_level">المستوى 1</h2>
             <div id="q_hearts">❤️❤️❤️</div>
             <div id="q_score">🏆 النقاط: 0</div>
+            <span style="color:#ef4444; font-size:14px;">
+                ( كل لما تعدي المستوي يبقي اصعب )
+            </span>
         </div>
 
         <div style="text-align:center;">
             <p id="q_counter" style="font-weight:bold; color:var(--secondary);"></p>
             <h3 id="q_text" style="color:var(--text); margin-bottom:20px;"></h3>
             <div id="q_answers" style="display:grid; gap:10px;"></div>
+            <button id="nextBtn" onclick="goNext()"  style="display:none; margin-top:15px; padding:10px; border:none; border-radius:10px; background:#10b981; color:white;">التالي ➡️</button>
             <p id="q_msg" style="margin-top:15px; font-weight:bold;"></p>
         </div>
     </div>
+    
 </div>
 </div>
 <div id="relaxPage" class="page">
@@ -735,7 +771,28 @@
         quranBox.innerText = "جاري التحميل...";
         audioContainer.style.display = "block";
         document.getElementById('audioTitle').innerText = "استماع إلى: " + select.options[select.selectedIndex].text;
-        surahAudio.src = `https://server8.mp3quran.net/afs/${val.padStart(3, '0')}.mp3`;
+        let reciter = document.getElementById("reciterSelect").value;
+
+      const servers = {
+
+     afs: "https://server8.mp3quran.net/afs/",
+     husr: "https://server13.mp3quran.net/husr/",
+     sds: "https://server11.mp3quran.net/sds/",
+      minsh: "https://server10.mp3quran.net/minsh/",
+      maher: "https://server12.mp3quran.net/maher/",
+     ajm: "https://server10.mp3quran.net/ajm/",
+     shur: "https://server7.mp3quran.net/shur/",
+     ghamdi: "https://server7.mp3quran.net/ghamdi/",
+     basfar: "https://server6.mp3quran.net/basfar/",
+     tiblawi: "https://server6.mp3quran.net/tiblawi/",
+     abdulbasit: "https://server8.mp3quran.net/abdulbasit/",
+     yasser: "https://server11.mp3quran.net/yasser/",
+     qasim: "https://server8.mp3quran.net/qasim/"
+
+     };
+
+      surahAudio.src =
+      servers[reciter] + val.padStart(3, "0") + ".mp3";
 
         const localData = localStorage.getItem('surah_' + val);
         if (localData) quranBox.innerHTML = localData + "<br><p style='color:green; font-size:12px;'>✓ تعمل بدون إنترنت</p>";
@@ -750,6 +807,15 @@
         } catch(e) { if(!localData) quranBox.innerText = "تحتاج إنترنت لأول مرة."; }
     }
 
+
+    function changeReciter(){
+
+       const val = document.getElementById("surahSelect").value;
+
+     if(val){
+     getSurahData();
+      }
+    }
     function updateRamadanTimer() {
         const diff = new Date("March 1, 2025").getTime() - new Date().getTime();
         if (diff > 0) {
@@ -2822,30 +2888,7 @@ const _bank = [
     {q:"ما هو آخر شيء خلقه الله من آدم؟", a:"رجليه (خُلق الإنسان من عجل)", o:["رأسه", "قلبه", "يديه"]}
 ];
 
-function startReligionQuiz() {
-    _currentIdx = 0; 
-    _hearts = 3; 
-    _corrects = 0;
 
-    // هنا التعديل: بنحدد الـ 10 أسئلة بناءً على رقم المستوى (_L)
-    // المستوى 1 ياخد من 0 لـ 9، المستوى 2 ياخد من 10 لـ 19 وهكذا
-    let start = (_L - 1) * 10;
-    _activeQs = _bank.slice(start, start + 10);
-
-    // لو الأسئلة خلصت (وصل للـ 1000) يرجع للمستوى الأول
-    if (_activeQs.length === 0) {
-        alert("ما شاء الله! ختمت الـ 1000 سؤال كاملة.");
-        _L = 1;
-        startReligionQuiz();
-        return;
-    }
-
-    document.getElementById("q_level").innerText = "المستوى " + _L;
-    _updUI(); 
-    _loadQ();
-
-    showPage('islamicQuizPage');
-}
 
 function _loadQ() {
     let q = _activeQs[_currentIdx];
@@ -2912,19 +2955,7 @@ function _updUI() {
     document.getElementById("q_hearts").innerHTML = "❤️".repeat(_hearts) + "🖤".repeat(3-_hearts);
     document.getElementById("q_score").innerText = "🏆 النقاط: " + _S;
 }
-function startReligionQuiz() {
-    // تجهيز الداتا
-    _currentIdx = 0; _hearts = 3; _corrects = 0;
-    _activeQs = [..._bank].sort(()=>Math.random()-0.5).slice(0,10);
-    
-    // التحديث
-    document.getElementById("q_level").innerText = "المستوى " + _L;
-    _updUI(); 
-    _loadQ();
 
-    // الفتح بنظام التطبيق (عشان الزرار يشتغل)
-    showPage('islamicQuizPage');
-}
 let currentAudio;
 
 function playSound(src) {
@@ -3146,7 +3177,8 @@ loadProProgress();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
-    // نخلي فيه سجل تنقل
+
+// نخلي فيه سجل تنقل
 let pageHistory = ["homePage"];
 
 function showPage(pageId) {
@@ -3181,9 +3213,198 @@ window.addEventListener("popstate", function () {
         window.history.pushState({}, "");
     }
 });
-    
+
+
+function goToPage(){
+    let page = parseInt(document.getElementById("goToPageInput").value);
+
+    if(page >= 1 && page <= 604){
+        currentPage = page;
+        document.getElementById("mushafImage").src =
+        "https://quran.ksu.edu.sa/png_big/" + page + ".png";
+        document.getElementById("pageNumber").innerText = "الصفحة رقم " + page;
+    }else{
+        alert("اكتب رقم صحيح من 1 ل 604");
+    }
+}
+ 
+function loadDreams(){
+    let container = document.getElementById("dreamsList");
+    container.innerHTML = "";
+
+    dreamsData.forEach(dream => {
+        container.innerHTML += `
+            <div class="zikr-box">
+                <b>${dream.item}</b>
+                <span>${dream.meaning}</span>
+            </div>
+        `;
+    });
+}
+
+
+// ================== تحدي المعلومات الإسلامية ==================
+
+let iq_level = parseInt(localStorage.getItem("iq_level")) || 1;
+let iq_score = 0;
+let iq_hearts = 3;
+let iq_current = 0;
+let iq_correctCount = 0;
+let iq_questions = [];
+
+// استخراج أسئلة المستوى الحالي من البنك
+function getLevelQuestions(level){
+
+    // نفترض إن كل 10 أسئلة = مستوى
+    let start = (level - 1) * 10;
+    let end = start + 10;
+
+    return _bank.slice(start, end);
+}
+
+function startReligionQuiz(){
+
+    showPage('islamicQuizPage');
+
+    iq_score = 0;
+    iq_hearts = 3;
+    iq_current = 0;
+    iq_correctCount = 0;
+
+    iq_questions = getLevelQuestions(iq_level);
+
+    // لو مفيش مستوى أعلى
+    if(iq_questions.length === 0){
+        alert("🎉 خلصت كل المستويات!");
+        iq_level = 1;
+        iq_questions = getLevelQuestions(iq_level);
+    }
+
+    updateHeader();
+    loadQuestion();
+}
+
+function loadQuestion(){
+
+    if(iq_current >= iq_questions.length){
+        finishLevel();
+        return;
+    }
+
+    let qObj = iq_questions[iq_current];
+
+    document.getElementById("q_text").innerText = qObj.q;
+    document.getElementById("q_answers").innerHTML = "";
+    document.getElementById("q_msg").innerText = "";
+
+    let allAnswers = [qObj.a, ...qObj.o];
+    allAnswers.sort(() => Math.random() - 0.5);
+
+    allAnswers.forEach(ans => {
+
+        let btn = document.createElement("button");
+        btn.innerText = ans;
+        btn.style.padding = "12px";
+        btn.style.borderRadius = "10px";
+        btn.style.border = "none";
+        btn.style.cursor = "pointer";
+        btn.style.background = "#f3f4f6";
+
+        btn.onclick = ()=>{
+            checkAnswer(ans, qObj.a);
+        };
+
+        document.getElementById("q_answers").appendChild(btn);
+    });
+
+    setTimeout(()=>{
+        document.getElementById("q_text")
+        .scrollIntoView({behavior:"smooth"});
+    },100);
+}
+
+function checkAnswer(selected, correct){
+
+    let buttons = document.querySelectorAll("#q_answers button");
+    buttons.forEach(b=> b.disabled = true);
+
+    if(selected === correct){
+        iq_score += 10;
+        iq_correctCount++;
+        document.getElementById("q_msg").innerText = "✅ إجابة صحيحة";
+    }else{
+        iq_hearts--;
+        document.getElementById("q_msg").innerText =
+        "❌ خطأ! الإجابة الصحيحة: " + correct;
+    }
+
+    updateHeader();
+    // Scroll تلقائي للرسالة
+     setTimeout(()=>{
+    document.getElementById("q_msg")
+    .scrollIntoView({behavior:"smooth"});
+    },100);
+
+    if(iq_hearts <= 0){
+        setTimeout(()=>{
+            alert("❌ انتهت القلوب - سيتم إعادة المستوى");
+            resetLevel(false);
+        },800);
+        return;
+    }
+
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function goNext(){
+    document.getElementById("nextBtn").style.display = "none";
+    iq_current++;
+    loadQuestion();
+}
+
+function finishLevel(){
+
+    let percent = (iq_correctCount / iq_questions.length) * 100;
+
+    if(percent >= 70){
+        alert("🎉 نجحت! انتقلت للمستوى التالي");
+        iq_level++;
+        localStorage.setItem("iq_level", iq_level);
+        resetLevel(true);
+    }else{
+        alert("❌ لم تحقق 70% سيتم إعادة المستوى");
+        resetLevel(false);
+    }
+}
+
+function resetLevel(passed){
+
+    iq_score = 0;
+    iq_hearts = 3;
+    iq_current = 0;
+    iq_correctCount = 0;
+
+    if(passed){
+        iq_questions = getLevelQuestions(iq_level);
+        if(iq_questions.length === 0){
+            alert("🏆 خلصت جميع المستويات!");
+            iq_level = 1;
+            iq_questions = getLevelQuestions(iq_level);
+        }
+    }else{
+        iq_questions = getLevelQuestions(iq_level);
+    }
+
+    updateHeader();
+    loadQuestion();
+}
+
+function updateHeader(){
+    document.getElementById("q_level").innerText = "المستوى " + iq_level;
+    document.getElementById("q_hearts").innerText = "❤️".repeat(iq_hearts);
+    document.getElementById("q_score").innerText = "🏆 النقاط: " + iq_score;
+}
 </script>
 
 </body>
-
 </html>
