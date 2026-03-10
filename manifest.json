@@ -2,7 +2,7 @@
   "name": "تطبيق يَقِيَّن",
   "short_name": "يَقِيَّن",
   "start_url": "index.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#0f172a",
   "theme_color": "#16a34a",
   "orientation": "portrait",
